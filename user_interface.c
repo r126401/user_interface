@@ -6,8 +6,8 @@
  */
 
 #include "dialogos_json.h"
-#include "interfaz_usuario.h"
-#include "configuracion_usuario.h"
+#include "user_interface.h"
+//#include "configuracion_usuario.h"
 #include "esp_err.h"
 #include "esp_log.h"
 #include "driver/gpio.h"
@@ -18,7 +18,7 @@
 #include "conexiones.h"
 #include "nvslib.h"
 #include "events_device.h"
-#include "funciones_usuario.h"
+//#include "funciones_usuario.h"
 #include "esp_timer.h"
 
 #include "lv_factory_reset.h"
