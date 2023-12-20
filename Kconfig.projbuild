@@ -1,0 +1,13 @@
+menu "Configuracion Termostato"
+
+
+
+config GPIO_PIN_RELE
+	int "Pin gipo para activar el rele"
+	default 12
+	help 
+		Indica el pin gpio con el que se activa el rele
+
+
+
+endmenu

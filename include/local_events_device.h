@@ -1,0 +1,28 @@
+/*
+ * local_events_device.h
+ *
+ *  Created on: Oct 23, 2023
+ *      Author: t126401
+ */
+
+#ifndef COMPONENTS_INTERFAZ_USUARIO_INCLUDE_LOCAL_EVENTS_DEVICE_H_
+#define COMPONENTS_INTERFAZ_USUARIO_INCLUDE_LOCAL_EVENTS_DEVICE_H_
+
+
+
+
+typedef enum EVENT_DEVICE {
+
+	EVENT_NONE,
+
+
+
+}EVENT_DEVICE;
+
+
+
+
+
+
+
+#endif /* COMPONENTS_INTERFAZ_USUARIO_INCLUDE_LOCAL_EVENTS_DEVICE_H_ */
