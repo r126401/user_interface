@@ -8,7 +8,7 @@
 #ifndef COMPONENTS_INTERFAZ_USUARIO_INCLUDE_INTERFAZ_USUARIO_H_
 #define COMPONENTS_INTERFAZ_USUARIO_INCLUDE_INTERFAZ_USUARIO_H_
 
-#include "configuracion_usuario.h"
+
 #include "programmer.h"
 #include "api_json.h"
 #include "esp_wifi.h"

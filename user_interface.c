@@ -7,7 +7,6 @@
 
 #include "dialogos_json.h"
 #include "user_interface.h"
-#include "configuracion_usuario.h"
 #include "esp_err.h"
 #include "esp_log.h"
 #include "driver/gpio.h"
@@ -18,16 +17,10 @@
 #include "conexiones.h"
 #include "nvslib.h"
 #include "events_device.h"
-#include "funciones_usuario.h"
 #include "esp_timer.h"
-
-#include "lv_factory_reset.h"
-#include "lv_init_thermostat.h"
-#include "lv_thermostat.h"
-#include "code_application.h"
 #include "configuracion.h"
-#include "lv_rgb_main.h"
-#include "lvgl.h"
+
+
 
 
 #define CADENCIA_WIFI 250
@@ -133,7 +126,7 @@ esp_err_t appuser_get_date_sntp(DATOS_APLICACION *datosApp) {
 esp_err_t appuser_notify_error_sntp(DATOS_APLICACION *datosApp) {
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_notify_error_sntp", INFOTRAZA);
-	lv_update_alarm_device(datosApp);
+
 
 	return ESP_OK;
 }
@@ -200,13 +193,13 @@ esp_err_t appuser_notify_connecting_broker_mqtt(DATOS_APLICACION *datosApp) {
 esp_err_t appuser_notify_broker_connected_ok(DATOS_APLICACION *datosApp) {
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_notify_broker_connected_ok", INFOTRAZA);
-	lv_update_alarm_device(datosApp);
+
 
 	return ESP_OK;
 }
 esp_err_t appuser_notify_broker_disconnected(DATOS_APLICACION *datosApp) {
 	ESP_LOGI(TAG, ""TRAZAR"appuser_notify_broker_disconnected", INFOTRAZA);
-	lv_update_alarm_device(datosApp);
+
 
 
 	return ESP_OK;
@@ -269,9 +262,6 @@ cJSON* appuser_send_spontaneous_report(DATOS_APLICACION *datosApp, enum SPONTANE
 
 }
 esp_err_t appuser_load_schedule_extra_data(DATOS_APLICACION *datosApp, TIME_PROGRAM *programa_actual, cJSON *nodo) {
-
-	cJSON *item;
-	char* dato;
 
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_load_schedule_extra_data", INFOTRAZA);
@@ -434,7 +424,6 @@ esp_err_t appuser_set_command_application(cJSON *peticion, int nComando, DATOS_A
 
 
         case STATUS_DEVICE:
-            display_status_application(datosApp, respuesta);
             break;
 
 
@@ -456,7 +445,7 @@ void appuser_notify_scan_done(DATOS_APLICACION *datosApp, wifi_ap_record_t *ap_i
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_notify_scan_done", INFOTRAZA);
 	ESP_LOGI(TAG, ""TRAZAR"RECIBIDAS %d redes en app", INFOTRAZA, *ap_count);
-	lv_create_layout_search_ssid(ap_info, ap_count);
+
 
 
 }
