@@ -80,6 +80,7 @@ esp_err_t appuser_set_default_config(DATOS_APLICACION *datosApp) {
 esp_err_t appuser_notify_no_config(DATOS_APLICACION *datosApp) {
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_notify_smartconfig", INFOTRAZA);
+	conectar_dispositivo_wifi();
 
 
 
@@ -170,6 +171,7 @@ esp_err_t appuser_notify_connecting_wifi(DATOS_APLICACION *datosApp) {
 esp_err_t appuser_notify_wifi_connected_ok(DATOS_APLICACION *datosApp) {
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_notify_wifi_connected_ok, ESTADO: %s", INFOTRAZA, status2mnemonic(get_current_status_application(datosApp)));
+	get_my_id();
 
 	return ESP_OK;
 }
