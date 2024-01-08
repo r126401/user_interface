@@ -14,6 +14,13 @@
 #include "esp_wifi.h"
 
 
+typedef enum LOCAL_COMMAND_DEVICE {
+
+	OPERATION_REMOTE_RELAY = 50,
+	STATUS_LOCAL_DEVICE
+
+}LOCAL_COMMAND_DEVICE;
+
 
 
 
@@ -332,7 +339,6 @@ esp_err_t appuser_notify_error_wifi_connection(DATOS_APLICACION *datosApp);
 void appuser_notify_scan_done(DATOS_APLICACION *datosApp, wifi_ap_record_t *ap_info, uint16_t *ap_count);
 void appuser_process_event_none_schedule(DATOS_APLICACION *datosApp);
 void appuser_received_local_event(DATOS_APLICACION *datosApp, EVENT_DEVICE event);
-char* local_event_2_mnemonic(EVENT_DEVICE event);
 void appuser_notify_alarm_on_device(DATOS_APLICACION *datosApp, ALARM_TYPE alarm);
 void appuser_notify_alarm_off_device(DATOS_APLICACION *datosApp, ALARM_TYPE alarm);
 void appuser_notify_error_remote_device(DATOS_APLICACION *datosApp);

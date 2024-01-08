@@ -19,46 +19,20 @@
 #include "events_device.h"
 #include "esp_timer.h"
 #include "configuracion.h"
+#include "code_application.h"
 
 
 
-
-#define CADENCIA_WIFI 250
-#define CADENCIA_BROKER 300
-#define CADENCIA_SMARTCONFIG 80
-#define CADENCIA_SNTP 1000
-#define CADENCIA_ALARMA 1500
 
 
 
 static const char *TAG = "INTERFAZ_USUARIO";
+#define CADENCIA_WIFI 250 * 1000
+#define CADENCIA_BROKER 300 * 1000
+#define CADENCIA_SMARTCONFIG 80 * 1000
+#define CADENCIA_SNTP 1000 * 1000
+#define CADENCIA_ALARMA 250 * 1000
 
-
-
-char* local_event_2_mnemonic(EVENT_DEVICE event) {
-
-
-	static char mnemonic[50] = {0};
-
-	switch (event) {
-
-	case EVENT_NONE:
-		strcpy(mnemonic, "EVENT_NONE");
-		break;
-		default:
-		break;
-
-
-
-	}
-
-	ESP_LOGI(TAG, ""TRAZAR"TRADUCCION NEMONICO %d - %s",INFOTRAZA, event, mnemonic);
-
-
-
-	return mnemonic;
-
-}
 
 
 esp_err_t appuser_set_default_config(DATOS_APLICACION *datosApp) {
@@ -80,7 +54,9 @@ esp_err_t appuser_set_default_config(DATOS_APLICACION *datosApp) {
 esp_err_t appuser_notify_no_config(DATOS_APLICACION *datosApp) {
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_notify_smartconfig", INFOTRAZA);
-	conectar_dispositivo_wifi();
+	activate_timer_led(CADENCIA_SMARTCONFIG);
+
+
 
 
 
@@ -93,6 +69,9 @@ esp_err_t appuser_notify_application_started(DATOS_APLICACION *datosApp) {
  * Introduce el codigo para notificar que la aplicacion ha comenzado. Si estas en este punto,
  * significa que ya estas conectado a la red wifi y a mqtt y por lo tanto ,puedes notificarlo a la aplicacion.
  */
+
+	send_spontaneous_report(datosApp, STARTED);
+	change_status_application(datosApp, CHECK_PROGRAMS);
 
 
 
@@ -121,12 +100,14 @@ esp_err_t appuser_notify_start_ota(DATOS_APLICACION *datosApp) {
 esp_err_t appuser_get_date_sntp(DATOS_APLICACION *datosApp) {
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_get_date_sntp", INFOTRAZA);
+	activate_timer_led(CADENCIA_SNTP);
 
 	return ESP_OK;
 }
 esp_err_t appuser_notify_error_sntp(DATOS_APLICACION *datosApp) {
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_notify_error_sntp", INFOTRAZA);
+	activate_timer_led(CADENCIA_ALARMA);
 
 
 	return ESP_OK;
@@ -136,6 +117,7 @@ esp_err_t appuser_notify_sntp_ok(DATOS_APLICACION *datosApp) {
 
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_sntp_ok", INFOTRAZA);
+	cancel_timer_led();
 
 
 
@@ -149,6 +131,8 @@ esp_err_t appuser_notify_connecting_wifi(DATOS_APLICACION *datosApp) {
 
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_notify_connecting_wifi", INFOTRAZA);
+	activate_timer_led(CADENCIA_WIFI);
+
 
 	switch (datosApp->datosGenerales->estadoApp) {
 
@@ -172,6 +156,7 @@ esp_err_t appuser_notify_wifi_connected_ok(DATOS_APLICACION *datosApp) {
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_notify_wifi_connected_ok, ESTADO: %s", INFOTRAZA, status2mnemonic(get_current_status_application(datosApp)));
 	get_my_id();
+	cancel_timer_led();
 
 	return ESP_OK;
 }
@@ -181,6 +166,7 @@ esp_err_t appuser_notify_error_wifi_connection(DATOS_APLICACION *datosApp) {
 
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_notify_error_wifi_connection", INFOTRAZA);
+	activate_timer_led(CADENCIA_ALARMA);
 	return ESP_OK;
 
 }
@@ -190,20 +176,20 @@ esp_err_t appuser_notify_error_wifi_connection(DATOS_APLICACION *datosApp) {
 esp_err_t appuser_notify_connecting_broker_mqtt(DATOS_APLICACION *datosApp) {
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_notify_connecting_broker_mqtt", INFOTRAZA);
+	activate_timer_led(CADENCIA_BROKER);
 	return ESP_OK;
 }
 esp_err_t appuser_notify_broker_connected_ok(DATOS_APLICACION *datosApp) {
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_notify_broker_connected_ok", INFOTRAZA);
+	cancel_timer_led();
 
 
 	return ESP_OK;
 }
 esp_err_t appuser_notify_broker_disconnected(DATOS_APLICACION *datosApp) {
 	ESP_LOGI(TAG, ""TRAZAR"appuser_notify_broker_disconnected", INFOTRAZA);
-
-
-
+	activate_timer_led(CADENCIA_ALARMA);
 	return ESP_OK;
 }
 
@@ -215,16 +201,16 @@ void appuser_end_schedule(DATOS_APLICACION *datosApp) {
 
 
     ESP_LOGI(TAG, ""TRAZAR"appuser_end_schedule", INFOTRAZA);
-
+	relay_operation(datosApp, TEMPORIZADA, OFF);
+	send_spontaneous_report(datosApp, END_SCHEDULE);
 
 }
 
 esp_err_t appuser_start_schedule(DATOS_APLICACION *datosApp) {
 
-
-
-
 	ESP_LOGI(TAG, ""TRAZAR"appuser_start_schedule", INFOTRAZA);
+	relay_operation(datosApp, TEMPORIZADA, ON);
+	send_spontaneous_report(datosApp, START_SCHEDULE);
 
 
 	return ESP_OK;
@@ -251,15 +237,18 @@ esp_err_t appuser_notify_device_ok(DATOS_APLICACION *datosApp) {
 
 cJSON* appuser_send_spontaneous_report(DATOS_APLICACION *datosApp, enum SPONTANEOUS_TYPE tipoInforme, cJSON *spontaneous) {
 
+	/**
+	 * Introduce en esta funcion aquellos elementos que se quieran enviar especificos del dispositivo. Esta informacion se añadira
+	 * a la informacion que ya se envia normalmente.
+	 */
 
     switch(tipoInforme) {
-
-
         default:
             printf("enviarReporte--> Salida no prevista\n");
             break;
     }
 
+    cJSON_AddNumberToObject(spontaneous, APP_COMAND_ESTADO_RELE, gpio_get_level(CONFIG_GPIO_PIN_RELE));
     return spontaneous;
 
 }
@@ -267,6 +256,9 @@ esp_err_t appuser_load_schedule_extra_data(DATOS_APLICACION *datosApp, TIME_PROG
 
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_load_schedule_extra_data", INFOTRAZA);
+    if(extraer_dato_int(nodo, DURATION_PROGRAM, (int*) &programa_actual->duracion) != ESP_OK) {
+    	programa_actual->duracion = 0;
+    }
 
 	return ESP_OK;
 
@@ -300,7 +292,9 @@ esp_err_t appuser_load_default_schedules(DATOS_APLICACION *datosApp, cJSON *arra
 esp_err_t appuser_get_schedule_extra_data(TIME_PROGRAM *programa_actual, cJSON *nodo) {
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_get_schedule_extra_data", INFOTRAZA);
-
+    if(extraer_dato_int(nodo, DURATION_PROGRAM, (int*) &programa_actual->duracion) != ESP_OK) {
+    	programa_actual->duracion = 0;
+    }
 
 
 
@@ -310,6 +304,7 @@ esp_err_t appuser_get_schedule_extra_data(TIME_PROGRAM *programa_actual, cJSON *
 esp_err_t appuser_modify_schedule_extra_data(TIME_PROGRAM *programa_actual,cJSON *nodo) {
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_modify_schedule_extra_data", INFOTRAZA);
+	extraer_dato_uint32(nodo, DURATION_PROGRAM, &programa_actual->duracion);
 
 
 	return ESP_OK;
@@ -319,6 +314,11 @@ esp_err_t appuser_reporting_schedule_extra_data(TIME_PROGRAM *programa_actual, c
 
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_reporting_schedule_extra_data", INFOTRAZA);
+    if (programa_actual->duracion > 0) {
+        cJSON_AddNumberToObject(nodo, DURATION_PROGRAM, programa_actual->duracion);
+
+    }
+
 
 	return ESP_OK;
 }
@@ -422,16 +422,27 @@ void appuser_notify_schedule_events(DATOS_APLICACION *datosApp) {
 esp_err_t appuser_set_command_application(cJSON *peticion, int nComando, DATOS_APLICACION *datosApp, cJSON *respuesta) {
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_set_command_application", INFOTRAZA);
+
+
+
     switch(nComando) {
 
 
-        case STATUS_DEVICE:
-            break;
 
+        case OPERATION_REMOTE_RELAY:
+        	relay_operation(datosApp, REMOTA, INDETERMINADO);
+        	command_op_relay_remote(datosApp, respuesta);
+        	break;
+
+        case STATUS_LOCAL_DEVICE:
+        	command_status(datosApp, respuesta);
+            break;
 
         default:
             visualizar_comando_desconocido(datosApp, respuesta);
             break;
+
+
     }
 
 
@@ -547,6 +558,7 @@ void appuser_notify_error_remote_device(DATOS_APLICACION *datosApp) {
 void appuser_notify_smartconfig_end(DATOS_APLICACION *datosApp) {
 
 
+	cancel_timer_led();
 
 
 }
@@ -554,6 +566,7 @@ void appuser_notify_smartconfig_end(DATOS_APLICACION *datosApp) {
 void appuser_notify_error_smartconfig(DATOS_APLICACION *datosApp) {
 
 	ESP_LOGE(TAG, ""TRAZAR"Senalizamos el error en smartconfig", INFOTRAZA);
+	activate_timer_led(CADENCIA_ALARMA);
 
 
 }
