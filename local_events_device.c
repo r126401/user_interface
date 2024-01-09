@@ -68,6 +68,16 @@ char* local_event_2_mnemonic(EVENT_DEVICE event) {
 }
 
 
+void extra_time_push(void *arg) {
+
+	bool *push = (bool*) arg;
+	push = false;
+
+	ESP_LOGI(TAG, ""TRAZAR"PUSH PASADO A FALSE", INFOTRAZA);
+
+
+
+}
 
 
 
@@ -78,6 +88,7 @@ void process_event_short_push_button(DATOS_APLICACION *datosApp) {
 
 	static uint8_t seconds = 0;
 	static bool push = false;
+	static esp_timer_handle_t release_timer;
 	ESP_LOGI(TAG, ""TRAZAR"process_event_short_push_button", INFOTRAZA);
     const esp_timer_create_args_t repeater_timer_args = {
             .callback = &process_event_short_push_button,
@@ -86,7 +97,17 @@ void process_event_short_push_button(DATOS_APLICACION *datosApp) {
 			.arg = (DATOS_APLICACION*) datosApp
     };
 
+    const esp_timer_create_args_t release_timer_args = {
+            .callback = &extra_time_push,
+            /* name is optional, but may help identify the timer when debugging */
+            .name = "repeater manage button",
+			.arg = (bool*) push
+    };
+
+
+
     if (!push) {
+    	ESP_LOGW(TAG, ""TRAZAR"Se pulsa el boton", INFOTRAZA);
     	push = true;
     	esp_timer_create(&repeater_timer_args, &timer_push);
     	esp_timer_start_once(timer_push, 1000000);
@@ -105,7 +126,7 @@ void process_event_short_push_button(DATOS_APLICACION *datosApp) {
     		ESP_LOGW(TAG, ""TRAZAR"Boton liberado... %d segundos", INFOTRAZA, seconds);
     		esp_timer_stop(timer_push);
     		esp_timer_delete(timer_push);
-    		push = false;
+
     		if(seconds > VERY_LARGE_INTERVAL)  {
     			ESP_LOGW(TAG, ""TRAZAR"PULSACION MUY LARGA!!!!", INFOTRAZA);
     			send_event_device(__func__, EVENT_VERY_LARGE_PUSH_BUTTON);
@@ -122,6 +143,9 @@ void process_event_short_push_button(DATOS_APLICACION *datosApp) {
         		}
     		}
     		seconds=0;
+    		esp_timer_create(&release_timer_args, &release_timer);
+    		esp_timer_start_once(release_timer, 250000);
+    		//push = false;
 
     	}
 
