@@ -128,7 +128,7 @@ esp_err_t appuser_notify_no_config(DATOS_APLICACION *datosApp) {
 	ESP_LOGI(TAG, ""TRAZAR"appuser_notify_smartconfig", INFOTRAZA);
 	lv_configure_smartconfig();
 	lv_factory_boot();
-	lv_cancel_timing_backlight();
+	//lv_cancel_timing_backlight();
 
 	//lv_timer_handler();
 
