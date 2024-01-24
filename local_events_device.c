@@ -15,6 +15,8 @@
 #include "logging.h"
 #include "events_device.h"
 #include "alarmas.h"
+#include "code_application.h"
+#include "lv_thermostat.h"
 
 
 
@@ -55,7 +57,7 @@ void process_local_event_timeout_reading_temperature(DATOS_APLICACION *datosApp,
 	if (reset_counter) {
 		error_counter = 0;
 		ESP_LOGW(TAG, ""TRAZAR"Sensor %d se ha recuperado antes de llegar al umbral de fallo ", INFOTRAZA, datosApp->termostato.master);
-		send_event_device(__func__,EVENT_REMOTE_DEVICE_OK);
+		//send_event_device(__func__,EVENT_REMOTE_DEVICE_OK);
 		return;
 	} else {
 		ESP_LOGW(TAG,""TRAZAR" CONTADOR DE FALLOS %d", INFOTRAZA, error_counter);
@@ -115,6 +117,42 @@ void process_local_event_waiting_response_temperature(DATOS_APLICACION *datosApp
 
 }
 
+void process_local_event_action_button(DATOS_APLICACION *datosApp) {
+	
+	
+	ESP_LOGI(TAG, ""TRAZAR"process_local_event_action_button", INFOTRAZA);
+	ESTADO_RELE relay;
+	static SUB_STATUS_APP sub_status = NORMAL_SUB_STATUS;
+
+	switch (get_current_status_application(datosApp)) {
+
+		case NORMAL_AUTO:
+		case NORMAL_AUTOMAN:
+		case SCHEDULING:
+			change_status_application(datosApp, NORMAL_MANUAL);
+			relay = gpio_get_level(CONFIG_GPIO_PIN_RELE);
+			
+			if (relay == ON) {
+				lv_paint_sub_status_app(MOON_SUB_STATUS);
+			} else {
+				lv_paint_sub_status_app(SUN_SUB_STATUS);
+			}
+			relay = relay_operation(datosApp, MANUAL, INDETERMINADO);
+			send_spontaneous_report(datosApp, CAMBIO_ESTADO_APLICACION);
+			break;
+		case NORMAL_MANUAL:
+			lv_paint_sub_status_app(NORMAL_SUB_STATUS);
+			change_status_application(datosApp, CHECK_PROGRAMS);
+			thermostat_action(datosApp);
+			send_spontaneous_report(datosApp, CAMBIO_ESTADO_APLICACION);
+			break;
+		default:
+			sub_status = NORMAL_SUB_STATUS;
+			break;
+	}
+
+}
+
 
 
 void received_local_event(DATOS_APLICACION *datosApp, EVENT_DEVICE event) {
@@ -145,6 +183,14 @@ void received_local_event(DATOS_APLICACION *datosApp, EVENT_DEVICE event) {
 	case EVENT_WAITING_RESPONSE_TEMPERATURE:
 		process_local_event_waiting_response_temperature(datosApp);
 		break;
+	case EVENT_RESET_BUTTON:
+		esp_restart();
+		break;
+	case EVENT_ACTION_BUTTON:
+		process_local_event_action_button(datosApp);
+		break;
+
+
 	default:
 		break;
 
