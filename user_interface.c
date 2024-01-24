@@ -971,48 +971,43 @@ void appuser_received_local_event(DATOS_APLICACION *datosApp, EVENT_DEVICE event
 			.arg = (void*) datosApp
     };
 
-	if (get_current_status_application(datosApp) != NORMAL_MANUAL) {
-
-		switch (event) {
-
-		case EVENT_UP_THRESHOLD:
-			ESP_LOGE(TAG,""TRAZAR"PROCESAMOS EVENT_UP_THRESHOLD", INFOTRAZA);
-			datosApp->termostato.tempUmbral += datosApp->termostato.incdec;
-			lv_update_threshold(datosApp, false);
-			if (esp_timer_is_active(temporizador_duracion)) {
-				esp_timer_stop(temporizador_duracion);
-				esp_timer_delete(temporizador_duracion);
-				ESP_LOGI(TAG, ""TRAZAR"timer cancelado", INFOTRAZA);
-			}
-			ESP_ERROR_CHECK(esp_timer_create(&change_threshold_timer_args, &temporizador_duracion));
-			ESP_ERROR_CHECK(esp_timer_start_once(temporizador_duracion, (3000000)));
-
-			break;
-		case EVENT_DOWN_THRESHOLD:
-			datosApp->termostato.tempUmbral -= datosApp->termostato.incdec;
-			lv_update_threshold(datosApp, false);
-			if (esp_timer_is_active(temporizador_duracion)) {
-				esp_timer_stop(temporizador_duracion);
-				esp_timer_delete(temporizador_duracion);
-				ESP_LOGI(TAG, ""TRAZAR"timer cancelado", INFOTRAZA);
-			}
-			ESP_ERROR_CHECK(esp_timer_create(&change_threshold_timer_args, &temporizador_duracion));
-			ESP_ERROR_CHECK(esp_timer_start_once(temporizador_duracion, (3000000)));
-			break;
-
-		default:
-		case EVENT_ANSWER_TEMPERATURE:
-			update_thermostat_device(datosApp);
-			break;
 
 
+	switch (event) {
+
+	case EVENT_UP_THRESHOLD:
+		ESP_LOGE(TAG,""TRAZAR"PROCESAMOS EVENT_UP_THRESHOLD", INFOTRAZA);
+		datosApp->termostato.tempUmbral += datosApp->termostato.incdec;
+		lv_update_threshold(datosApp, false);
+		if (esp_timer_is_active(temporizador_duracion)) {
+			esp_timer_stop(temporizador_duracion);
+			esp_timer_delete(temporizador_duracion);
+			ESP_LOGI(TAG, ""TRAZAR"timer cancelado", INFOTRAZA);
 		}
-		
-	} else {
+		ESP_ERROR_CHECK(esp_timer_create(&change_threshold_timer_args, &temporizador_duracion));
+		ESP_ERROR_CHECK(esp_timer_start_once(temporizador_duracion, (3000000)));
 
-		ESP_LOGW(TAG, ""TRAZAR"No actual el boton porque estamos en modo manual", INFOTRAZA);
+		break;
+	case EVENT_DOWN_THRESHOLD:
+		datosApp->termostato.tempUmbral -= datosApp->termostato.incdec;
+		lv_update_threshold(datosApp, false);
+		if (esp_timer_is_active(temporizador_duracion)) {
+			esp_timer_stop(temporizador_duracion);
+			esp_timer_delete(temporizador_duracion);
+			ESP_LOGI(TAG, ""TRAZAR"timer cancelado", INFOTRAZA);
+		}
+		ESP_ERROR_CHECK(esp_timer_create(&change_threshold_timer_args, &temporizador_duracion));
+		ESP_ERROR_CHECK(esp_timer_start_once(temporizador_duracion, (3000000)));
+		break;
+
+	default:
+	case EVENT_ANSWER_TEMPERATURE:
+		update_thermostat_device(datosApp);
+		break;
+
 
 	}
+
 
 
 
