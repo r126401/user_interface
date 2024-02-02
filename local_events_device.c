@@ -153,6 +153,13 @@ void process_local_event_action_button(DATOS_APLICACION *datosApp) {
 
 }
 
+void process_local_event_factory_button(DATOS_APLICACION *datosApp) {
+
+	ESP_LOGI(TAG, ""TRAZAR" SE EJECUTA process_local_event_factory_button", INFOTRAZA);
+	reinicio_fabrica(datosApp);
+	esp_restart();
+
+}
 
 
 void received_local_event(DATOS_APLICACION *datosApp, EVENT_DEVICE event) {
@@ -188,6 +195,9 @@ void received_local_event(DATOS_APLICACION *datosApp, EVENT_DEVICE event) {
 		break;
 	case EVENT_ACTION_BUTTON:
 		process_local_event_action_button(datosApp);
+		break;
+	case EVENT_FACTORY_BUTTON:
+		process_local_event_factory_button(datosApp);
 		break;
 
 

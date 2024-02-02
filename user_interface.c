@@ -85,6 +85,9 @@ char* local_event_2_mnemonic(EVENT_DEVICE event) {
 	case EVENT_ACTION_BUTTON:
 		strcpy(mnemonic, "EVENT_ACTION_BUTTON");
 		break;
+	case EVENT_FACTORY_BUTTON:
+		strcpy(mnemonic, "EVENT_FACTORY_BUTTON");
+		break;
 
 
 
