@@ -84,7 +84,20 @@ void extra_time_push(void *arg) {
 
 void process_event_short_push_button(DATOS_APLICACION *datosApp) {
 
+/*
+	ESP_LOGI(TAG, ""TRAZAR"VAMOS A PULSAR EL BOTON", INFOTRAZA);
+	if (gpio_get_level(CONFIG_GPIO_PIN_RELE == OFF)) {
 
+		gpio_set_level(CONFIG_GPIO_PIN_LED, ON);
+		gpio_set_level(CONFIG_GPIO_PIN_RELE, ON);
+		ESP_LOGI(TAG, ""TRAZAR"ENCEDEMOS EL RELE", INFOTRAZA);
+	} else {
+		gpio_set_level(CONFIG_GPIO_PIN_LED, OFF);
+		gpio_set_level(CONFIG_GPIO_PIN_RELE, OFF);
+		ESP_LOGI(TAG, ""TRAZAR"APAGAMOS EL RELE", INFOTRAZA);
+
+	}
+	*/
 
 	static uint8_t seconds = 0;
 	static bool push = false;
@@ -92,14 +105,12 @@ void process_event_short_push_button(DATOS_APLICACION *datosApp) {
 	ESP_LOGI(TAG, ""TRAZAR"process_event_short_push_button", INFOTRAZA);
     const esp_timer_create_args_t repeater_timer_args = {
             .callback = &process_event_short_push_button,
-            /* name is optional, but may help identify the timer when debugging */
             .name = "repeater manage button",
 			.arg = (DATOS_APLICACION*) datosApp
     };
 
     const esp_timer_create_args_t release_timer_args = {
             .callback = &extra_time_push,
-            /* name is optional, but may help identify the timer when debugging */
             .name = "repeater manage button",
 			.arg = (bool*) push
     };
