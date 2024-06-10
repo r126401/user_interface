@@ -20,7 +20,7 @@
 #include "esp_timer.h"
 #include "configuracion.h"
 #include "code_application.h"
-
+#include "applib.h"
 
 
 
@@ -39,9 +39,17 @@ esp_err_t appuser_set_default_config(DATOS_APLICACION *datosApp) {
 
 
 
+
     //Escribe aqui el codigo de inicializacion por defecto de la aplicacion.
 	// Esta funcion es llamada desde el componente configuracion defaultConfig.
 	// Aqui puedes establecer los valores por defecto para tu aplicacion.
+
+
+	set_app_config_wifi(datosApp, true);
+	set_app_config_mqtt(datosApp, true);
+	set_app_config_timing(datosApp, true);
+	set_app_config_manage_schedules(datosApp, true);
+
 
 
 
@@ -268,6 +276,11 @@ esp_err_t appuser_set_configuration_to_json(DATOS_APLICACION *datosApp, cJSON *c
 
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_set_configuration_to_json", INFOTRAZA);
+	cJSON_AddBoolToObject(conf, WIFI_CONFIG, get_app_config_wifi(datosApp));
+	cJSON_AddBoolToObject(conf, MQTT_CONFIG, get_app_config_mqtt(datosApp));
+	cJSON_AddBoolToObject(conf, TIMING_CONFIG, get_app_config_timing(datosApp));
+	cJSON_AddBoolToObject(conf, SCHEDULES_CONFIG, get_app_config_manage_schedules(datosApp));
+
 
 	return ESP_OK;
 }
@@ -275,6 +288,12 @@ esp_err_t appuser_set_configuration_to_json(DATOS_APLICACION *datosApp, cJSON *c
 esp_err_t appuser_json_to_configuration(DATOS_APLICACION *datosApp, cJSON *datos) {
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_json_to_configuration", INFOTRAZA);
+	extraer_dato_bool(datos, WIFI_CONFIG, &datosApp->wifi);
+	extraer_dato_bool(datos, MQTT_CONFIG, &datosApp->mqtt);
+	extraer_dato_bool(datos, TIMING_CONFIG, &datosApp->timing);
+	extraer_dato_bool(datos, SCHEDULES_CONFIG, &datosApp->schedules);
+
+
 
 
 
