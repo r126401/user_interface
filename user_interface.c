@@ -45,10 +45,10 @@ esp_err_t appuser_set_default_config(DATOS_APLICACION *datosApp) {
 	// Aqui puedes establecer los valores por defecto para tu aplicacion.
 
 
-	set_app_config_wifi(datosApp, true);
-	set_app_config_mqtt(datosApp, true);
-	set_app_config_timing(datosApp, true);
-	set_app_config_manage_schedules(datosApp, true);
+	set_app_config_wifi(datosApp, CONFIG_WIFI_ACTIVE);
+	set_app_config_mqtt(datosApp, CONFIG_MQTT_ACTIVE);
+	set_app_config_timing(datosApp, CONFIG_CLOCK_ACTIVE);
+	set_app_config_manage_schedules(datosApp, CONFIG_SCHEDULE_ACTIVE);
 
 
 
