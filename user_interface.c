@@ -45,13 +45,6 @@ esp_err_t appuser_set_default_config(DATOS_APLICACION *datosApp) {
 	// Aqui puedes establecer los valores por defecto para tu aplicacion.
 
 
-	set_app_config_wifi(datosApp, CONFIG_WIFI_ACTIVE);
-	set_app_config_mqtt(datosApp, CONFIG_MQTT_ACTIVE);
-	set_app_config_timing(datosApp, CONFIG_CLOCK_ACTIVE);
-	set_app_config_manage_schedules(datosApp, CONFIG_SCHEDULE_ACTIVE);
-
-
-
 
 	return ESP_OK;
 }
@@ -252,7 +245,7 @@ cJSON* appuser_send_spontaneous_report(DATOS_APLICACION *datosApp, enum SPONTANE
 
     switch(tipoInforme) {
         default:
-            printf("enviarReporte--> Salida no prevista\n");
+            ESP_LOGE(TAG, ""TRAZAR" Salida no prevista", INFOTRAZA);
             break;
     }
 
