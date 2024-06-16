@@ -70,8 +70,8 @@ char* local_event_2_mnemonic(EVENT_DEVICE event) {
 
 void extra_time_push(void *arg) {
 
-	bool *push = (bool*) arg;
-	push = false;
+	//bool *push = (bool*) arg;
+	//push = false;
 
 	ESP_LOGI(TAG, ""TRAZAR"PUSH PASADO A FALSE", INFOTRAZA);
 
