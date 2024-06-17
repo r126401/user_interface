@@ -71,8 +71,9 @@ esp_err_t appuser_notify_application_started(DATOS_APLICACION *datosApp) {
  * significa que ya estas conectado a la red wifi y a mqtt y por lo tanto ,puedes notificarlo a la aplicacion.
  */
 
+	ESP_LOGI(TAG, ""TRAZAR"appuser_notify_application_started: Comienza la aplicacion!!!!!!!!!!!", INFOTRAZA);
 	send_spontaneous_report(datosApp, STARTED);
-	change_status_application(datosApp, CHECK_PROGRAMS);
+	//change_status_application(datosApp, CHECK_PROGRAMS);
 
 
 
@@ -98,7 +99,7 @@ esp_err_t appuser_notify_start_ota(DATOS_APLICACION *datosApp) {
 
 }
 
-esp_err_t appuser_get_date_sntp(DATOS_APLICACION *datosApp) {
+esp_err_t appuser_notify_get_date_sntp(DATOS_APLICACION *datosApp) {
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_get_date_sntp", INFOTRAZA);
 	activate_timer_led(CADENCIA_SNTP);
@@ -270,9 +271,9 @@ esp_err_t appuser_set_configuration_to_json(DATOS_APLICACION *datosApp, cJSON *c
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_set_configuration_to_json", INFOTRAZA);
 	cJSON_AddBoolToObject(conf, WIFI_CONFIG, get_app_config_wifi(datosApp));
-	cJSON_AddBoolToObject(conf, MQTT_CONFIG, get_app_config_mqtt(datosApp));
-	cJSON_AddBoolToObject(conf, TIMING_CONFIG, get_app_config_timing(datosApp));
-	cJSON_AddBoolToObject(conf, SCHEDULES_CONFIG, get_app_config_manage_schedules(datosApp));
+	cJSON_AddBoolToObject(conf, MQTT_CONFIG, using_mqtt(datosApp));
+	cJSON_AddBoolToObject(conf, TIMING_CONFIG, using_ntp(datosApp));
+	cJSON_AddBoolToObject(conf, SCHEDULES_CONFIG, using_schedules(datosApp));
 
 
 	return ESP_OK;
@@ -410,6 +411,10 @@ esp_err_t appuser_notify_app_status(DATOS_APLICACION *datosApp, enum ESTADO_APP 
 	case RESTARTING:
 		strcpy(status, "RESTARTING");
 		break;
+	case APP_STARTED:
+		strcpy(status, "APP_STARTED");
+		break;
+
 
 
 	}

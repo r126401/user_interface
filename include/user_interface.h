@@ -106,7 +106,7 @@ esp_err_t appuser_notify_broker_disconnected(DATOS_APLICACION *datosApp);
  * @post
  * @return
  */
-esp_err_t appuser_get_date_sntp(DATOS_APLICACION *datosApp);
+esp_err_t appuser_notify_get_date_sntp(DATOS_APLICACION *datosApp);
 /**
  * @fn esp_err_t appuser_error_get_date_sntp()
  * @brief La funcion es llamada desde el modulo ntp para indicar a la aplicacion que no se ha podido sincronizar la hora
