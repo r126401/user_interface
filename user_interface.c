@@ -378,31 +378,23 @@ esp_err_t appuser_notify_app_status(DATOS_APLICACION *datosApp, enum ESTADO_APP 
 	case STARTING:
 		strcpy(status, "STARTING");
 		break;
-	case NO_PROGRAM:
-		strcpy(status, "NO ACTIVO");
-		break;
+
 	case UPGRADING:
 		strcpy(status, "UPGRADE EN PROGRESO");
 		break;
-	case SYNCRONIZING:
-		strcpy(status, "SINCRONIZANDO");
-		break;
+
 	case WAITING_END_STARTING:
 		strcpy(status, "----");
 		break;
 	case FACTORY:
 		strcpy(status, "FACTORY");
 		break;
-	case NORMAL_FIN_PROGRAMA_ACTIVO:
-		strcpy(status, "AUTO");
-		break;
+
 	case ERROR_APP:
 		strcpy(status, "ERROR_APP");
 		break;
-	case DEVICE_ALONE:
-		strcpy(status, "TERMOSTATO");
-		break;
-	case CHECK_PROGRAMS:
+
+	case CHECK_SCHEDULES:
 		strcpy(status, "CHECK");
 		break;
 	case SCHEDULING:
@@ -413,6 +405,9 @@ esp_err_t appuser_notify_app_status(DATOS_APLICACION *datosApp, enum ESTADO_APP 
 		break;
 	case APP_STARTED:
 		strcpy(status, "APP_STARTED");
+		break;
+	case ERROR_CHANGE_STATUS:
+		strcpy(status, "ERROR_CHANGE_STATUS");
 		break;
 
 
@@ -488,13 +483,13 @@ void appuser_notify_event_none_schedule(DATOS_APLICACION *datosApp) {
 
 	switch (datosApp->datosGenerales->estadoApp) {
 
-	case NO_PROGRAM:
+	//case NO_PROGRAM:
 	case NORMAL_AUTO:
 	case NORMAL_AUTOMAN:
 
 		break;
 
-	case CHECK_PROGRAMS:
+	case CHECK_SCHEDULES:
 
 		break;
 
