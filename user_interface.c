@@ -27,6 +27,7 @@
 
 
 static const char *TAG = "INTERFAZ_USUARIO";
+#define CADENCIA_STARTING 250 * 1000
 #define CADENCIA_WIFI 250 * 1000
 #define CADENCIA_BROKER 300 * 1000
 #define CADENCIA_SMARTCONFIG 80 * 1000
@@ -73,7 +74,7 @@ esp_err_t appuser_notify_application_started(DATOS_APLICACION *datosApp) {
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_notify_application_started: Comienza la aplicacion!!!!!!!!!!!", INFOTRAZA);
 	send_spontaneous_report(datosApp, STARTED);
-	//change_status_application(datosApp, CHECK_PROGRAMS);
+
 
 
 
@@ -134,20 +135,6 @@ esp_err_t appuser_notify_connecting_wifi(DATOS_APLICACION *datosApp) {
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_notify_connecting_wifi", INFOTRAZA);
 	activate_timer_led(CADENCIA_WIFI);
-
-
-	switch (datosApp->datosGenerales->estadoApp) {
-
-	case FACTORY:
-
-		break;
-
-	case STARTING:
-		break;
-	default:
-		break;
-
-	}
 
 
 
@@ -360,59 +347,10 @@ esp_err_t appuser_received_application_device_message(DATOS_APLICACION *datosApp
 
 esp_err_t appuser_notify_app_status(DATOS_APLICACION *datosApp, enum ESTADO_APP estado) {
 
-	char status[50] = {0};
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_notify_app_status", INFOTRAZA);
 
-	switch(datosApp->datosGenerales->estadoApp) {
 
-	case NORMAL_AUTO:
-		strcpy(status, "AUTO");
-		break;
-	case NORMAL_AUTOMAN:
-		strcpy(status, "AUTO*");
-		break;
-	case NORMAL_MANUAL:
-		strcpy(status, "MANUAL");
-		break;
-	case STARTING:
-		strcpy(status, "STARTING");
-		break;
-
-	case UPGRADING:
-		strcpy(status, "UPGRADE EN PROGRESO");
-		break;
-
-	case WAITING_END_STARTING:
-		strcpy(status, "----");
-		break;
-	case FACTORY:
-		strcpy(status, "FACTORY");
-		break;
-
-	case ERROR_APP:
-		strcpy(status, "ERROR_APP");
-		break;
-
-	case CHECK_SCHEDULES:
-		strcpy(status, "CHECK");
-		break;
-	case SCHEDULING:
-		strcpy(status, "SCHEDULING");
-		break;
-	case RESTARTING:
-		strcpy(status, "RESTARTING");
-		break;
-	case APP_STARTED:
-		strcpy(status, "APP_STARTED");
-		break;
-	case ERROR_CHANGE_STATUS:
-		strcpy(status, "ERROR_CHANGE_STATUS");
-		break;
-
-
-
-	}
 
 
 	return ESP_OK;
