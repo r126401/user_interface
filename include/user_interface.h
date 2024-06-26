@@ -217,7 +217,7 @@ esp_err_t appuser_set_configuration_to_json(DATOS_APLICACION *datosApp, cJSON *c
 esp_err_t appuser_json_to_configuration(DATOS_APLICACION *datosApp, cJSON *datos);
 
 
-void appuser_notify_event_none_schedule(DATOS_APLICACION *datosApp);
+void appuser_notify_event_no_active_schedule(DATOS_APLICACION *datosApp);
 
 
 /**
