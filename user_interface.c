@@ -26,7 +26,7 @@
 
 
 
-static const char *TAG = "INTERFAZ_USUARIO";
+static const char *TAG = "user_interface.c";
 #define CADENCIA_STARTING 100 * 1000
 #define CADENCIA_WIFI 100 * 1000
 #define CADENCIA_BROKER 300 * 1000
@@ -386,11 +386,11 @@ esp_err_t appuser_set_command_application(cJSON *peticion, int nComando, DATOS_A
 
         case OPERATION_REMOTE_RELAY:
         	relay_operation(datosApp, REMOTA, INDETERMINADO);
-        	command_op_relay_remote(datosApp, respuesta);
+        	appuser_set_relay_operation_command(datosApp, respuesta);
         	break;
 
         case STATUS_LOCAL_DEVICE:
-        	command_status(datosApp, respuesta);
+        	appuser_get_status_command(datosApp, respuesta);
             break;
 
         default:

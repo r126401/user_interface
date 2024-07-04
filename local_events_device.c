@@ -22,7 +22,7 @@
 
 
 
-static const char *TAG = "LOCAL_EVENTS_DEVICE";
+static const char *TAG = "local_events_device.c";
 static esp_timer_handle_t timer_push;
 #define LARGE_INTERVAL 3
 #define VERY_LARGE_INTERVAL 5
