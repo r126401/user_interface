@@ -179,7 +179,7 @@ esp_err_t appuser_notify_no_config(DATOS_APLICACION *datosApp);
 
 esp_err_t appuser_notify_error_device(DATOS_APLICACION *datosApp);
 
-esp_err_t appuser_notify_device_ok(DATOS_APLICACION *datosApp);
+esp_err_t appuser_notify_device_ready(DATOS_APLICACION *datosApp);
 
 
 

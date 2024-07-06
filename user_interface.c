@@ -218,10 +218,11 @@ esp_err_t appuser_notify_error_device(DATOS_APLICACION *datosApp) {
 }
 
 
-esp_err_t appuser_notify_device_ok(DATOS_APLICACION *datosApp) {
+esp_err_t appuser_notify_device_ready(DATOS_APLICACION *datosApp) {
 	
 	ESP_LOGI(TAG, ""TRAZAR"El dispositivo esta operativo", INFOTRAZA);
 
+	send_spontaneous_report(datosApp, DEVICE_RECOVERED);
 
 
 	return ESP_OK;
