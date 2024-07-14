@@ -422,7 +422,13 @@ void appuser_notify_scan_done(DATOS_APLICACION *datosApp, wifi_ap_record_t *ap_i
 void appuser_notify_event_no_active_schedule(DATOS_APLICACION *datosApp) {
 
 
-	ESP_LOGI(TAG, ""TRAZAR"Ningun schedule activo", INFOTRAZA);
+	if (gpio_get_level(CONFIG_GPIO_PIN_RELE) == ON) {
+		relay_operation(datosApp, TEMPORIZADA, OFF);
+
+	} else {
+		ESP_LOGI(TAG, ""TRAZAR"Ningun schedule activo", INFOTRAZA);
+	}
+
 
 
 
