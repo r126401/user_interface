@@ -93,7 +93,7 @@ void process_local_event_answer_temperature(DATOS_APLICACION *datosApp) {
 	}
 	ESP_LOGW(TAG, ""TRAZAR"Reiniciamos el contador de fallos", INFOTRAZA);
 	process_local_event_timeout_reading_temperature(datosApp, true);
-	send_event(__func__,EVENT_DEVICE_READY);
+	//send_event(__func__,EVENT_DEVICE_READY);
 	appuser_received_local_event(datosApp, EVENT_ANSWER_TEMPERATURE);
 
 
