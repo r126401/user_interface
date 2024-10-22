@@ -17,6 +17,7 @@
 #include "alarmas.h"
 #include "code_application.h"
 #include "lv_thermostat.h"
+#include "applib.h"
 
 
 
@@ -92,7 +93,7 @@ void process_local_event_answer_temperature(DATOS_APLICACION *datosApp) {
 	}
 	ESP_LOGW(TAG, ""TRAZAR"Reiniciamos el contador de fallos", INFOTRAZA);
 	process_local_event_timeout_reading_temperature(datosApp, true);
-	send_event(__func__,EVENT_DEVICE_OK);
+	send_event(__func__,EVENT_DEVICE_READY);
 	appuser_received_local_event(datosApp, EVENT_ANSWER_TEMPERATURE);
 
 
@@ -142,7 +143,7 @@ void process_local_event_action_button(DATOS_APLICACION *datosApp) {
 			break;
 		case NORMAL_MANUAL:
 			lv_paint_sub_status_app(NORMAL_SUB_STATUS);
-			change_status_application(datosApp, CHECK_PROGRAMS);
+			change_status_application(datosApp, CHECK_SCHEDULES);
 			thermostat_action(datosApp);
 			send_spontaneous_report(datosApp, CAMBIO_ESTADO_APLICACION);
 			break;

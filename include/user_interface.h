@@ -139,7 +139,7 @@ esp_err_t appuser_notify_broker_disconnected(DATOS_APLICACION *datosApp);
  * @post
  * @return
  */
-esp_err_t appuser_get_date_sntp(DATOS_APLICACION *datosApp);
+esp_err_t appuser_notify_get_date_sntp(DATOS_APLICACION *datosApp);
 /**
  * @fn esp_err_t appuser_error_get_date_sntp()
  * @brief La funcion es llamada desde el modulo ntp para indicar a la aplicacion que no se ha podido sincronizar la hora
@@ -378,5 +378,7 @@ void appuser_notify_alarm_off_device(DATOS_APLICACION *datosApp, ALARM_TYPE alar
 void appuser_notify_error_remote_device(DATOS_APLICACION *datosApp);
 void appuser_notify_smartconfig_end(DATOS_APLICACION *datosApp);
 void appuser_notify_error_smartconfig(DATOS_APLICACION *datosApp);
+void appuser_notify_event_no_active_schedule(DATOS_APLICACION *datosApp);
+esp_err_t appuser_notify_device_ready(DATOS_APLICACION *datosApp);
 
 #endif /* COMPONENTS_USER_INTERFACE_INCLUDE_USER_INTERFACE_H_ */

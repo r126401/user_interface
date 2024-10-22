@@ -28,6 +28,7 @@
 #include "configuracion.h"
 #include "lv_rgb_main.h"
 #include "lvgl.h"
+#include "applib.h"
 
 
 #define CADENCIA_WIFI 250
@@ -135,7 +136,10 @@ esp_err_t appuser_set_default_config(DATOS_APLICACION *datosApp) {
 
 esp_err_t appuser_notify_no_config(DATOS_APLICACION *datosApp) {
 
-	ESP_LOGI(TAG, ""TRAZAR"appuser_notify_smartconfig", INFOTRAZA);
+	ESP_LOGI(TAG, ""TRAZAR"Se aplica configuracion de defecto en factory", INFOTRAZA);
+	datosApp->termostato.tempUmbral = datosApp->termostato.tempUmbralDefecto;
+    lv_update_threshold(datosApp, true);
+
 	lv_configure_smartconfig();
 	lv_factory_boot();
 	//lv_cancel_timing_backlight();
@@ -194,7 +198,7 @@ esp_err_t appuser_notify_start_ota(DATOS_APLICACION *datosApp) {
 
 }
 
-esp_err_t appuser_get_date_sntp(DATOS_APLICACION *datosApp) {
+esp_err_t appuser_notify_get_date_sntp(DATOS_APLICACION *datosApp) {
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_get_date_sntp", INFOTRAZA);
 
@@ -657,7 +661,7 @@ esp_err_t appuser_notify_app_status(DATOS_APLICACION *datosApp, enum ESTADO_APP 
 
 	ESP_LOGI(TAG, ""TRAZAR"appuser_notify_app_status", INFOTRAZA);
 
-	switch(datosApp->datosGenerales->estadoApp) {
+	switch(get_current_status_application(datosApp)) {
 
 	case NORMAL_AUTO:
 		strcpy(status, "AUTO");
@@ -671,14 +675,8 @@ esp_err_t appuser_notify_app_status(DATOS_APLICACION *datosApp, enum ESTADO_APP 
 	case STARTING:
 		strcpy(status, "STARTING");
 		break;
-	case NO_PROGRAM:
-		strcpy(status, "NO ACTIVO");
-		break;
 	case UPGRADING:
 		strcpy(status, "UPGRADE EN PROGRESO");
-		break;
-	case SYNCRONIZING:
-		strcpy(status, "SINCRONIZANDO");
 		break;
 	case WAITING_END_STARTING:
 		strcpy(status, "----");
@@ -686,23 +684,26 @@ esp_err_t appuser_notify_app_status(DATOS_APLICACION *datosApp, enum ESTADO_APP 
 	case FACTORY:
 		strcpy(status, "FACTORY");
 		break;
-	case NORMAL_FIN_PROGRAMA_ACTIVO:
+	case END_SCHEDULE:
 		strcpy(status, "AUTO");
 		break;
 	case ERROR_APP:
 		strcpy(status, "ERROR_APP");
 		break;
-	case DEVICE_ALONE:
-		strcpy(status, "TERMOSTATO");
-		break;
-	case CHECK_PROGRAMS:
+	case CHECK_SCHEDULES:
 		strcpy(status, "CHECK");
-		break;
-	case SCHEDULING:
-		strcpy(status, "SCHEDULING");
 		break;
 	case RESTARTING:
 		strcpy(status, "RESTARTING");
+		break;
+	case UNKNOWN_STATUS:
+		strcpy(status, "UNKNOWN_STATUS");
+		break;
+	case DEVICE_READY:
+		strcpy(status, "DEVICE_READY");
+		break;
+	case RECOVERING:
+		strcpy(status, "RECOVERING");
 		break;
 
 
@@ -918,16 +919,15 @@ void appuser_notify_event_none_schedule(DATOS_APLICACION *datosApp) {
 
 	lv_update_bar_schedule(datosApp, false);
 
-	switch (datosApp->datosGenerales->estadoApp) {
+	switch (get_current_status_application(datosApp)) {
 
-	case NO_PROGRAM:
-	case NORMAL_AUTO:
+	case NO_SCHEDULE:
 	case NORMAL_AUTOMAN:
 		datosApp->termostato.tempUmbral = datosApp->termostato.tempUmbralDefecto;
 		lv_update_threshold(datosApp, true);
 		break;
 
-	case CHECK_PROGRAMS:
+	case CHECK_SCHEDULES:
 		datosApp->termostato.tempUmbral = datosApp->termostato.tempUmbralDefecto;
 		//change_status_application(datosApp, NORMAL_AUTO);
 		break;
@@ -1102,4 +1102,17 @@ void appuser_notify_error_smartconfig(DATOS_APLICACION *datosApp) {
 
 }
 
+void appuser_notify_event_no_active_schedule(DATOS_APLICACION *datosApp) {
 
+	ESP_LOGE(TAG, ""TRAZAR"Notificacion de ningun schedule activo", INFOTRAZA);
+	datosApp->termostato.tempUmbral = datosApp->termostato.tempUmbralDefecto;
+	lv_update_threshold(datosApp, true);
+	ESP_LOGI(TAG, ""TRAZAR" Ningun schedule. Se aplica temperatura de defecto: %.02f", INFOTRAZA, datosApp->termostato.tempUmbral);
+
+
+}
+
+esp_err_t appuser_notify_device_ready(DATOS_APLICACION *datosApp) {
+
+	return ESP_OK;
+}
